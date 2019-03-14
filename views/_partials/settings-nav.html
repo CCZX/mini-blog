@@ -1,0 +1,19 @@
+<div class="col-md-3 list-group">
+  <a href="#" class="list-group-item disabled">用户设置</a>
+  <a href="/settings/profile" class="list-group-item" id="a1">基本信息</a>
+  <a href="/settings/admin" class="list-group-item" id="a2">账户设置</a>
+</div>
+<script>
+  let a1 = document.getElementById('a1')
+  let a2 = document.getElementById('a2')
+  a1.onclick = function () {
+    a1.classList.add('active')
+    a2.classList.remove('active')
+    // return false/
+  }
+  a2.onclick = function () {
+    a1.classList.remove('active')
+    a2.classList.add('active')
+    // return false
+  }
+</script>

@@ -1,0 +1,94 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container">
+  {{include '../_partials/settings-nav.html'}}
+  <div class="col-md-5">
+    <form action="/settings/profile" method="POST" id="profile_form">
+      <div class="form-group">
+        <label for="exampleInputEmail1">账号</label>
+        <input class="form-control-static" value="{{ user.email }}" name="email" readonly>
+        <!-- <div class="col-md-2 profile-avatar"> -->
+            <dl>
+              <dt>头像设置</dt>
+              <dd>
+                <img class="avatar" width="150" height="150" src="../public/img/avatar-default.png" alt="">
+                <div>
+                  <input class="btn btn-default" href="" type="file" value="上传图片" name="avatar">
+                </div>
+              </dd>
+            </dl>
+          <!-- </div> -->
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">昵称</label>
+        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="" name="nickname" value="{{ user.nickname }}">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">介绍</label>
+        <textarea class="form-control" rows="3" name="bio">{{ user.bio }}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">性别</label>
+        <div>
+          <label class="radio-inline">
+            <input type="radio" name="gender" id="gender" value="0"> 男
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="gender" id="gender" value="1"> 女
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="gender" id="gender" value="-1"> 保密
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">生日</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="" name="brithday" value="{{user.brithday}}">
+      </div>
+      <button type="submit" class="btn btn-success">保存</button>
+    </form>
+  </div>
+  <!-- <div class="col-md-2 profile-avatar">
+    <dl>
+      <dt>头像设置</dt>
+      <dd>
+        <img class="avatar" width="150" height="150" src="../public/img/avatar-default.png" alt="">
+        <div>
+          <input class="btn btn-default" href="" type="file" value="上传图片">
+        </div>
+      </dd>
+    </dl>
+  </div> -->
+</section>
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script>
+  $('#profile_form').on('submit', function (e) {
+      e.preventDefault()
+      var formData = $(this).serialize()
+      $.ajax({
+        url: '/settings/profile',
+        type: 'post',
+        data: formData,
+        dataType: 'json',
+        success: function (data) {
+          // console.log(data)
+          var err_code = data.err_code
+          if (err_code === 0) {
+            window.alert('修改成功！')
+            // 服务端重定向针对异步请求无效
+            window.location.href = '/'
+          } else if (err_code === 1) {
+            window.alert('用户名已经存在')
+          } else if (err_code === 2) {
+            window.alert('修改失败')
+          } else if (err_code === 500) {
+            window.alert('服务器忙，请稍后重试！')
+          }
+        }
+      })
+    })
+</script>
+{{/block}}

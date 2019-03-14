@@ -1,0 +1,99 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <p>文章详情</p>
+  <p>{{ topic.title }}</p>
+  <p><span>{{ topic.mo }} • {{ topic.date }}</span></p>
+  <div>
+    {{ topic.content }}
+  </div>
+</body>
+</html> -->
+
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container" >
+    <h1>文章详情页面</h1>
+    <h3>{{ topic&&topic.title }}</h3>
+    <p><span>{{ topic&&topic.mo }} • {{ topic&&topic.date }}</span></p>
+    <div style="width:850px;">
+      <p>{{ topic&&topic.content }}</p>
+    </div>
+    <a href=""></a>
+</section>
+<section class="container">
+    <div class="row">
+      <div class="col-md-9">
+
+        <hr>
+        <form id="comment_form" method="POST" action="/topics/main">
+          <div class="form-group">
+            <input type="hidden" value="{{ user&&user.nickname }}" name="nickname">
+            <label for="exampleInputPassword1">添加回复</label>
+            <textarea class="form-control" name="comment" id="" cols="10" rows="10" id="comment"></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">回复</button>
+        </form>
+        {{ each comments }}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+              <span>{{ $value.nickname }}</span> commented 
+              <span>{{ $value.date }}</span>
+              <span class="action">
+                <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
+                <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
+                <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
+              </span>
+            </div>
+            <div class="panel-body">
+              {{ $value.comment }}
+            </div>
+        </div>
+        {{ /each }}
+      </div>
+    </div>
+  </section>
+  <script src="/node_modules/jquery/dist/jquery.js"></script>
+  <script>
+    $('#comment_form').on('submit', function (e) {
+      let com = document.getElementById('comment')
+      e.preventDefault()
+      var formData = $(this).serialize()
+      // console.log(formData)
+      $.ajax({
+        url: '/topics/main',
+        type: 'post',
+        data: formData,
+        dataType: 'json',
+        success: function (data) {
+          // console.log(data)
+          var err_code = data.err_code
+          if (err_code === 0) {
+            window.alert('留言成功！')
+            // 服务端重定向针对异步请求无效
+            // window.location.href = '/topics/main'
+          } else if (err_code === 1) {
+            window.alert('请先登陆用户！')
+          } else if (err_code === 2) {
+            window.alert('评论不能为空！')
+          } else if (err_code === 500) {
+            window.alert('服务器忙，请稍后重试！')
+          }
+        },
+        
+      })
+      // formData.comment = ''
+      // com.value = ''
+    })
+  </script>
+{{/block}}
+{{}}

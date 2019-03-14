@@ -1,0 +1,60 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container">
+  <div class="row">
+    <div class="col-md-5">
+      <form id="topic_form" action="/topics/new" method="POST">
+        <div class="form-group">
+          <label for="exampleInputEmail1">选择板块</label>
+          <select class="form-control" name="mo">
+            <option>分享</option>
+            <option>问答</option>
+            <option>招聘</option>
+            <option>客户端测试</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="hidden" class="form-control" id="exampleInputEmail1" name="nickname" value="{{ user.nickname }}">
+          <!-- <input type="hidden" name="date"> -->
+        </div>
+        <div class="form-group">
+          <label for="exampleInputEmail1">标题</label>
+          <input type="text" class="form-control" id="exampleInputEmail1" name="title" >
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">内容</label>
+          <textarea class="form-control" rows="3" name="content"></textarea>
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+    </div>
+  </div>
+</section>
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script>
+      $('#topic_form').on('submit', function (e) {
+      e.preventDefault()
+      var formData = $(this).serialize()
+      // console.log(formData)
+      $.ajax({
+        url: '/topics/new',
+        type: 'post',
+        data: formData,
+        dataType: 'json',
+        success: function (data) {
+          var err_code = data.err_code
+          if (err_code === 0) {
+            window.alert('发表成功！')
+            // 服务端重定向针对异步请求无效
+            window.location.href = '/'
+          } else if (err_code === 500) {
+            window.alert('服务器错误')
+          } 
+        }
+      })
+    })
+</script>
+{{/block}}
